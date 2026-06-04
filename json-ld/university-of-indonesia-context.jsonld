@@ -1,0 +1,61 @@
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "ui": "https://www.ui.ac.id/vocab#",
+    "oai": "http://www.openarchives.org/OAI/2.0/",
+    "dc": "http://purl.org/dc/elements/1.1/",
+
+    "University": "schema:CollegeOrUniversity",
+    "name": "schema:name",
+    "alternateName": "schema:alternateName",
+    "description": "schema:description",
+    "url": "schema:url",
+    "logo": "schema:logo",
+    "foundingDate": "schema:foundingDate",
+    "location": "schema:location",
+    "address": "schema:address",
+    "sameAs": "schema:sameAs",
+
+    "Repository": "schema:DataCatalog",
+    "repositoryName": "oai:repositoryName",
+    "baseURL": {
+      "@id": "oai:baseURL",
+      "@type": "@id"
+    },
+    "protocolVersion": "oai:protocolVersion",
+    "earliestDatestamp": "oai:earliestDatestamp",
+    "adminEmail": {
+      "@id": "oai:adminEmail",
+      "@type": "schema:email"
+    },
+
+    "ScholarlyWork": "schema:CreativeWork",
+    "title": "dc:title",
+    "creator": "dc:creator",
+    "subject": "dc:subject",
+    "publisher": "dc:publisher",
+    "date": {
+      "@id": "dc:date",
+      "@type": "schema:Date"
+    },
+    "type": "dc:type",
+    "identifier": "dc:identifier",
+    "language": "dc:language",
+    "rights": "dc:rights",
+
+    "AuthenticationService": "ui:SingleSignOn",
+    "protocol": "ui:protocol",
+    "loginEndpoint": {
+      "@id": "ui:loginEndpoint",
+      "@type": "@id"
+    }
+  },
+  "@type": "University",
+  "name": "University of Indonesia",
+  "alternateName": "Universitas Indonesia",
+  "url": "https://www.ui.ac.id/",
+  "sameAs": [
+    "https://www.linkedin.com/school/university-of-indonesia/",
+    "https://scholarhub.ui.ac.id/"
+  ]
+}

@@ -78,6 +78,10 @@ common:
     url: finops/university-of-indonesia-finops.yml
   - type: Review
     url: review.yml
+  - type: x-json-ld
+    url: json-ld/university-of-indonesia-context.jsonld
+  - type: x-blog
+    url: blogs/blogs.json
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
