@@ -1,0 +1,46 @@
+---
+name: University of Indonesia
+description: University of Indonesia public developer/API footprint review for APIs.json cataloging.
+url: https://raw.githubusercontent.com/api-evangelist/university-of-indonesia/refs/heads/main/review.yml
+created: '2026-06-03'
+modified: '2026-06-03'
+reviews:
+  - date: '2026-06-03'
+    rating: 2
+    summary: >-
+      University of Indonesia exposes a limited but real public API footprint.
+      The only fully public, documented, machine-readable interface verified
+      live is the UI Scholars Hub OAI-PMH 2.0 endpoint (Digital Commons /
+      bepress), which returned a valid Identify response (repositoryName
+      "UI Scholars Hub"). The university-wide SSO runs on CAS and its login is
+      reachable, but no public developer portal, API keys, or client
+      registration exists. No official api-evangelist-style GitHub
+      organization for UI was found (only unofficial community projects).
+      Several institutional domains (www, lib, lontar) appear geofenced and
+      did not resolve from the review environment; no endpoints were
+      fabricated.
+    endpoints:
+      - url: https://scholarhub.ui.ac.id/do/oai/?verb=Identify
+        status: 200
+        note: Live OAI-PMH 2.0 Identify response, repositoryName "UI Scholars Hub".
+      - url: https://scholarhub.ui.ac.id/
+        status: 200
+        note: UI Scholars Hub institutional repository landing page.
+      - url: https://sso.ui.ac.id/cas/login
+        status: 200
+        note: CAS Single Sign-On login; no public developer docs.
+      - url: https://academic.ui.ac.id/
+        status: 200
+        note: Academic system portal; gated, no public API docs.
+      - url: https://www.ui.ac.id/
+        status: 0
+        note: Official website; geofenced/blocked from review environment, known live.
+      - url: https://lib.ui.ac.id/
+        status: 0
+        note: Library portal; geofenced/blocked from review environment.
+      - url: https://lontar.ui.ac.id/
+        status: 0
+        note: LONTAR library OPAC; geofenced/blocked from review environment.
+      - url: https://www.linkedin.com/school/university-of-indonesia/
+        status: 200
+        note: Official LinkedIn school page.

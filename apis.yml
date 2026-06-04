@@ -1,0 +1,83 @@
+---
+aid: university-of-indonesia
+name: University of Indonesia
+description: >-
+  University of Indonesia (Universitas Indonesia, UI) is a public research
+  university based in Depok and Salemba, Jakarta, ranked #206 in the QS World
+  University Rankings 2025 and the highest-ranked university in Indonesia. Its
+  public, machine-readable developer footprint is limited: UI Scholars Hub, the
+  institutional research repository hosted on the Digital Commons (bepress)
+  platform, exposes a live OAI-PMH 2.0 metadata interface for harvesting
+  scholarly works, and the campus-wide Single Sign-On runs on CAS (Central
+  Authentication Service). No public, self-service developer portal with
+  documented REST endpoints or API keys was found; academic, library, and
+  identity systems are gated behind institutional credentials.
+type: Index
+position: Consumer
+access: 3rd-Party
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+url: https://raw.githubusercontent.com/api-evangelist/university-of-indonesia/refs/heads/main/apis.yml
+tags:
+  - Education
+  - Higher Education
+  - University
+  - Indonesia
+  - Research
+  - Repository
+  - OAI-PMH
+  - Authentication
+created: '2026-06-03'
+modified: '2026-06-03'
+specificationVersion: '0.19'
+apis:
+  - aid: university-of-indonesia:scholarhub-oai
+    name: UI Scholars Hub OAI-PMH
+    description: >-
+      Open Archives Initiative Protocol for Metadata Harvesting (OAI-PMH 2.0)
+      interface for UI Scholars Hub, the University of Indonesia institutional
+      research repository running on the Digital Commons (bepress) platform.
+      The endpoint returns standards-based Dublin Core metadata for theses,
+      dissertations, articles, and other scholarly works and supports the
+      standard verbs (Identify, ListRecords, ListSets, GetRecord, etc.).
+      Verified live returning a valid OAI-PMH Identify response (repositoryName
+      "UI Scholars Hub", protocolVersion 2.0).
+    humanURL: https://scholarhub.ui.ac.id/
+    baseURL: https://scholarhub.ui.ac.id/do/oai/
+    tags: [ Repository, OAI-PMH, Research, Metadata, Open Access ]
+    properties:
+      - type: Documentation
+        url: https://scholarhub.ui.ac.id/
+      - type: BaseURL
+        url: https://scholarhub.ui.ac.id/do/oai/
+  - aid: university-of-indonesia:sso-cas
+    name: SSO UI (CAS Authentication)
+    description: >-
+      Sistem Akun UI, the university-wide Single Sign-On service, implemented
+      using the CAS (Central Authentication Service) protocol at sso.ui.ac.id.
+      It authenticates UI civitas academica across integrated campus IT
+      resources. The login endpoint is publicly reachable, but there is no
+      public, self-service developer documentation or client-registration
+      portal; integration is gated and arranged internally with UI IT.
+    humanURL: https://sso.ui.ac.id/
+    tags: [ Authentication, SSO, CAS, Identity ]
+    properties:
+      - type: Documentation
+        url: https://sso.ui.ac.id/account/node/3
+common:
+  - type: Website
+    url: https://www.ui.ac.id/
+  - type: LinkedIn
+    url: https://www.linkedin.com/school/university-of-indonesia/
+  - type: Authentication
+    url: https://sso.ui.ac.id/
+  - type: Plans
+    url: plans/university-of-indonesia-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/university-of-indonesia-rate-limits.yml
+  - type: FinOps
+    url: finops/university-of-indonesia-finops.yml
+  - type: Review
+    url: review.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
