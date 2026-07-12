@@ -1,0 +1,27 @@
+generated: '2026-07-11'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.ui.ac.id
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Feb  3 23:59:59 2027 GMT
+  hsts: null
+- host: scholarhub.ui.ac.id
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep 27 11:16:40 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: sso.ui.ac.id
+  https: true
+  tls_version: TLSv1.2
+  cert_expires: Oct  8 04:55:45 2026 GMT
+  hsts: false
+domains:
+- domain: ui.ac.id
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: quarantine

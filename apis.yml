@@ -64,6 +64,8 @@ apis:
       - type: Documentation
         url: https://sso.ui.ac.id/account/node/3
 common:
+  - type: DomainSecurity
+    url: security/university-of-indonesia-domain-security.yml
   - type: Website
     url: https://www.ui.ac.id/
   - type: LinkedIn
