@@ -1,17 +1,30 @@
 ---
 aid: university-of-indonesia
 name: University of Indonesia
+x-type: university
+x-category: Public Research University
 description: >-
   University of Indonesia (Universitas Indonesia, UI) is a public research
-  university based in Depok and Salemba, Jakarta, ranked #206 in the QS World
-  University Rankings 2025 and the highest-ranked university in Indonesia. Its
-  public, machine-readable developer footprint is limited: UI Scholars Hub, the
-  institutional research repository hosted on the Digital Commons (bepress)
-  platform, exposes a live OAI-PMH 2.0 metadata interface for harvesting
-  scholarly works, and the campus-wide Single Sign-On runs on CAS (Central
-  Authentication Service). No public, self-service developer portal with
-  documented REST endpoints or API keys was found; academic, library, and
-  identity systems are gated behind institutional credentials.
+  university in Depok and Salemba, Jakarta, the highest-ranked university in
+  Indonesia. Its programmable footprint is real but almost entirely closed. UI
+  operates its own Kong Enterprise API gateway at api.ui.ac.id on its own
+  network allocation (152.118.0.0/16, APNIC "INDONESIAUNI-ID"), a campus-wide
+  CAS Single Sign-On at sso.ui.ac.id, an institution-hosted Moodle learning
+  platform at emas2.ui.ac.id exposing Moodle Web Services and an LTI 1.3
+  platform endpoint, and the LONTAR library OPAC at lib.ui.ac.id. Every one of
+  those is credential-gated: the gateway answers 401 {"message":"Unauthorized"}
+  on every probed path, the LMS web service rejects anonymous calls with
+  invalidtoken, and no developer portal, API reference, OpenAPI description,
+  key issuance or client registration exists anywhere on the public surface.
+  The two research-discovery surfaces that DO answer anonymously are vendor
+  tenancies on UI hostnames, not UI engineering — scholarhub.ui.ac.id CNAMEs to
+  bepress (Digital Commons) and scholar.ui.ac.id CNAMEs to ui.elsevierpure.com
+  (Elsevier Pure Portal) — and are recorded here as tenant relationships with
+  the vendor contracts deliberately left in the vendors' own repositories. UI is
+  a Crossref member (4386, prefix 10.7454) and carries a ROR identifier. The
+  main web estate at www.ui.ac.id sits behind an F5 bot-defense interstitial
+  that returns HTTP 200 for every path including ones that do not exist, so no
+  claim in this profile rests on a status code from that host.
 type: Index
 deliveryModel:
   model: saas
@@ -45,56 +58,232 @@ tags:
   - Higher Education
   - University
   - Indonesia
+  - Southeast Asia
   - Research
-  - Repository
+  - Research Repository
   - OAI-PMH
-  - Authentication
+  - Identity
+  - Single Sign-On
+  - Learning Management
+  - Library
+  - API Gateway
 created: '2026-06-03'
-modified: '2026-06-03'
+modified: '2026-09-01'
 specificationVersion: '0.23'
 apis:
-  - aid: university-of-indonesia:scholarhub-oai
-    name: UI Scholars Hub OAI-PMH
+  - aid: university-of-indonesia:api-gateway
+    name: UI API Gateway (Kong Enterprise)
     description: >-
-      Open Archives Initiative Protocol for Metadata Harvesting (OAI-PMH 2.0)
-      interface for UI Scholars Hub, the University of Indonesia institutional
-      research repository running on the Digital Commons (bepress) platform.
-      The endpoint returns standards-based Dublin Core metadata for theses,
-      dissertations, articles, and other scholarly works and supports the
-      standard verbs (Identify, ListRecords, ListSets, GetRecord, etc.).
-      Verified live returning a valid OAI-PMH Identify response (repositoryName
-      "UI Scholars Hub", protocolVersion 2.0).
+      api.ui.ac.id is a Kong Enterprise 3.3.1.0 API gateway operated by the
+      university on its own network. Every probed path — /, /v1, /status,
+      /docs, /openapi.json, /oauth2/token, /.well-known/openid-configuration —
+      returns HTTP 401 with a JSON body {"message":"Unauthorized"} and the
+      Kong response headers (server: kong/3.3.1.0-enterprise-edition,
+      x-kong-response-latency, access-control-expose-headers naming
+      X-Kong-Proxy-Latency and X-Kong-Upstream-Latency). The gateway is real
+      and institution-operated; its routes, its consumers and any contract
+      describing them are private. No specification has been generated to
+      stand in for one.
+    humanURL: https://api.ui.ac.id/
+    baseURL: https://api.ui.ac.id/
+    tags: [ API Gateway, Kong, Authentication, Private ]
+    x-operator: institution
+    x-operator-basis: >-
+      api.ui.ac.id is under ui.ac.id, the university's own registrable domain, with no CNAME.
+      It resolves to 152.118.148.211, inside 152.118.0.0/16, registered at APNIC as netname
+      INDONESIAUNI-ID, descr "University of Indonesia", country ID. Kong is self-hosted
+      software, not a hosted vendor tenancy, and no vendor identity appears in the host,
+      the DNS chain or the response bodies.
+    properties:
+      - type: BaseURL
+        url: https://api.ui.ac.id/
+  - aid: university-of-indonesia:sso-cas
+    name: SSO UI (CAS Single Sign-On)
+    description: >-
+      Sistem Akun UI, the university-wide Single Sign-On, implemented with the
+      Apereo CAS protocol at sso.ui.ac.id. https://sso.ui.ac.id/ redirects to
+      /cas/login and returns a live CAS login form (title "SSO UI", Indonesian
+      and English prompts, jsessionid-rewritten theme assets under
+      /cas/themes/ui/). Campus applications delegate to it — beranda.ui.ac.id
+      bounces an unauthenticated request to
+      /cas/login?service=http%3A%2F%2Fberanda.ui.ac.id%2F… — so the ticket
+      validation surface is in production use. It is not, however, publicly
+      documented: /cas/p3/serviceValidate, /cas/idp/metadata and
+      /cas/oidc/.well-known/openid-configuration all return the same HTML
+      login page with HTTP 200 rather than a CAS/SAML/OIDC payload, which is a
+      soft-200 and not evidence of those endpoints. No SAML 2.0 or Shibboleth
+      identity-provider metadata was found for UI in any federation aggregate,
+      and Indonesia has no eduGAIN member federation.
+    humanURL: https://sso.ui.ac.id/
+    baseURL: https://sso.ui.ac.id/cas/
+    tags: [ Authentication, SSO, CAS, Identity ]
+    x-operator: institution
+    x-operator-basis: >-
+      sso.ui.ac.id is under ui.ac.id with no CNAME, resolving to 152.118.148.213 inside the
+      university's own APNIC allocation 152.118.0.0/16 (INDONESIAUNI-ID). Apereo CAS is
+      open-source software the university runs itself; the theme, logo and Indonesian-language
+      copy are UI's own.
+    properties:
+      - type: BaseURL
+        url: https://sso.ui.ac.id/cas/login
+  - aid: university-of-indonesia:emas2-moodle
+    name: EMAS2 Learning Platform (Moodle Web Services + LTI 1.3)
+    description: >-
+      EMAS2 (E-learning Management System) at emas2.ui.ac.id is an
+      institution-hosted Moodle instance. Three machine surfaces answer
+      anonymously and identify themselves as live-but-gated rather than
+      absent: /webservice/rest/server.php returns HTTP 200 application/xml
+      with <EXCEPTION class="moodle_exception"><ERRORCODE>invalidtoken</…>,
+      /login/token.php returns HTTP 200 application/json
+      {"errorcode":"missingparam"} for the token-issuance call, and
+      /lib/ajax/service.php returns a Moodle JSON coding error. /mod/lti/auth.php
+      returns a populated LTI 1.3 OIDC authorization response form, which is
+      the education-regime `lti` conformance evidence recorded in
+      conformance/. There is no public token issuance, no enrolled-service
+      documentation and no published function list; the contract itself is
+      Moodle's product contract, not a UI-authored one, so none is stored here.
+    humanURL: https://emas2.ui.ac.id/
+    baseURL: https://emas2.ui.ac.id/webservice/rest/server.php
+    tags: [ Learning Management, Moodle, LTI, Education, Private ]
+    x-operator: institution
+    x-operator-basis: >-
+      emas2.ui.ac.id is under ui.ac.id with no CNAME and resolves to 152.118.24.145, inside
+      the university's own APNIC allocation 152.118.0.0/16 (INDONESIAUNI-ID). Moodle is
+      open-source software self-hosted on UI infrastructure — the pluginfile.php theme assets
+      are served from the same host — not a vendor-hosted tenancy such as MoodleCloud.
+    properties:
+      - type: BaseURL
+        url: https://emas2.ui.ac.id/webservice/rest/server.php
+  - aid: university-of-indonesia:scholarhub-oai
+    name: UI Scholars Hub OAI-PMH (bepress Digital Commons tenant)
+    description: >-
+      OAI-PMH 2.0 metadata-harvesting interface for UI Scholars Hub, the
+      university's institutional research repository. Verified live:
+      ?verb=Identify returns repositoryName "UI Scholars Hub",
+      protocolVersion 2.0, repositoryIdentifier scholarhub.ui.ac.id,
+      earliestDatestamp 2000-01-19, granularity YYYY-MM-DDThh:mm:ssZ;
+      ?verb=ListMetadataFormats returns nine prefixes including oai_dc,
+      qualified-dublin-core, oai_etdms and oai_openaire; ?verb=ListSets returns
+      115 sets. The content and the sets are UI's. The platform is not:
+      scholarhub.ui.ac.id is a CNAME onto bepress and the Identify response
+      names adminEmail dc-support@elsevier.com. Recorded as a tenant
+      relationship; the Digital Commons contract belongs in bepress/Elsevier's
+      own repository, not this one.
     humanURL: https://scholarhub.ui.ac.id/
     baseURL: https://scholarhub.ui.ac.id/do/oai/
-    tags: [ Repository, OAI-PMH, Research, Metadata, Open Access ]
+    tags: [ Research Repository, OAI-PMH, Research, Metadata, Open Access ]
+    x-operator: tenant
+    x-operator-basis: >-
+      CNAME tenancy. scholarhub.ui.ac.id CNAMEs to dcuischolarhub.bepress.com (bepress.com,
+      203.22.241.42/43) — a host rule reading only the registrable domain ui.ac.id would
+      credit this to the institution. The OAI-PMH Identify response independently confirms the
+      operator with adminEmail dc-support@elsevier.com. UI is the tenant; bepress/Elsevier
+      Digital Commons is the operator.
     properties:
       - type: Documentation
         url: https://scholarhub.ui.ac.id/
       - type: BaseURL
         url: https://scholarhub.ui.ac.id/do/oai/
-  - aid: university-of-indonesia:sso-cas
-    name: SSO UI (CAS Authentication)
+  - aid: university-of-indonesia:pure-portal
+    name: UI Research Portal (Elsevier Pure tenant)
     description: >-
-      Sistem Akun UI, the university-wide Single Sign-On service, implemented
-      using the CAS (Central Authentication Service) protocol at sso.ui.ac.id.
-      It authenticates UI civitas academica across integrated campus IT
-      resources. The login endpoint is publicly reachable, but there is no
-      public, self-service developer documentation or client-registration
-      portal; integration is gated and arranged internally with UI IT.
-    humanURL: https://sso.ui.ac.id/
-    tags: [ Authentication, SSO, CAS, Identity ]
+      scholar.ui.ac.id is University of Indonesia's Elsevier Pure Portal —
+      HTTP response header x-product "Pure Portal", title "Universitas
+      Indonesia", Elsevier CSP origins. It carries two machine surfaces:
+      /ws/oai, an OAI-PMH 2.0 provider whose Identify response reports
+      repositoryName "Pure OAI Repository", adminEmail purehosted@elsevier.com
+      and an OpenAIRE CERIF 1.2 profile with six metadata prefixes; and
+      /ws/api, which serves an OpenAPI 3.0.1 description titled "Pure API",
+      version 5.36.2-1, contact pure-support@elsevier.com, servers [{url:
+      /ws/api}] and 827 paths. That specification is Elsevier's product
+      contract, is byte-identical across every Pure customer, has a relative
+      servers[] block that makes it invisible to a host-based ownership check,
+      and is NOT stored in this repository. The tenancy is the fact recorded
+      here; the data is UI's, the contract is Elsevier's.
+    humanURL: https://scholar.ui.ac.id/
+    baseURL: https://scholar.ui.ac.id/ws/oai
+    tags: [ Research Repository, CRIS, OAI-PMH, Research, Metadata ]
+    x-operator: tenant
+    x-operator-basis: >-
+      CNAME tenancy, not in the pre-computed audit list. scholar.ui.ac.id CNAMEs to
+      ui.elsevierpure.com, which CNAMEs to apac.prod.elsevierpure.com and on to Cloudflare.
+      The hostname is under ui.ac.id, so every host-based verdict reads `institution` and
+      over-credits UI with Elsevier's engineering. Confirmed independently by the response
+      header x-product: Pure Portal, by the OAI adminEmail purehosted@elsevier.com and by
+      info.contact.email pure-support@elsevier.com in the served OpenAPI.
     properties:
       - type: Documentation
-        url: https://sso.ui.ac.id/account/node/3
+        url: https://scholar.ui.ac.id/
+      - type: BaseURL
+        url: https://scholar.ui.ac.id/ws/oai
+  - aid: university-of-indonesia:lontar-opac
+    name: LONTAR Library OPAC
+    description: >-
+      The University of Indonesia Library online public access catalogue,
+      served at lib.ui.ac.id (lontar.ui.ac.id redirects to it), title
+      "OPAC - Universitas Indonesia Library". LONTAR is library software
+      developed at UI and run on UI infrastructure. The catalogue is a
+      human-facing web application: no OAI-PMH provider, SRU/Z39.50 endpoint,
+      JSON export or machine-readable contract was found on the host, so it is
+      recorded as an institution-operated surface with no API, not as an API.
+    humanURL: https://lib.ui.ac.id/
+    tags: [ Library, Library Catalog, Discovery ]
+    x-operator: institution
+    x-operator-basis: >-
+      lib.ui.ac.id and lontar.ui.ac.id both resolve to 152.118.147.93 with no CNAME, inside
+      the university's own APNIC allocation 152.118.0.0/16 (INDONESIAUNI-ID). No Ex Libris,
+      OCLC, Koha-hosted or other vendor signature appears in the host, the DNS chain or the
+      served HTML.
+  - aid: university-of-indonesia:crossref-member
+    name: Crossref Member 4386 (Universitas Indonesia)
+    description: >-
+      University of Indonesia is a Crossref member and DOI registrant. Verified
+      against the Crossref REST API: https://api.crossref.org/members/4386
+      returns primary-name "Universitas Indonesia", location "Universitas
+      Indonesia, Indonesia", prefixes ["10.7454"] and counts
+      {current-dois 2395, backfile-dois 10359, total-dois 12754};
+      https://api.crossref.org/prefixes/10.7454 resolves the prefix back to
+      member 4386. This is a registry MEMBERSHIP — a fact about the
+      institution — and never a Crossref contract attributed to UI.
+    humanURL: https://api.crossref.org/members/4386
+    tags: [ Registry, DOI, Crossref, Research, Metadata ]
+    x-operator: registry
+    x-operator-basis: >-
+      api.crossref.org is an identifier registry the institution is registered IN, shared by
+      every Crossref member by design. The membership id (4386) and DOI prefix (10.7454) are
+      UI's; the API is Crossref's and is not stored here.
+  - aid: university-of-indonesia:ror
+    name: ROR Identifier 0116zj450
+    description: >-
+      Research Organization Registry record for University of Indonesia,
+      https://ror.org/0116zj450, verified against the ROR v2 API with
+      ror_display name "University of Indonesia" and links
+      http://www.ui.ac.id/. The identifier is the institution's; the registry
+      API is ROR's.
+    humanURL: https://ror.org/0116zj450
+    tags: [ Registry, Identifier, ROR, Research ]
+    x-operator: registry
+    x-operator-basis: >-
+      api.ror.org is an identifier registry the institution is registered IN. Shared by every
+      registered organization by definition; recording the membership is correct, saving the
+      registry's contract as UI's would not be.
 common:
-  - type: DomainSecurity
-    url: security/university-of-indonesia-domain-security.yml
   - type: Website
     url: https://www.ui.ac.id/
   - type: LinkedIn
     url: https://www.linkedin.com/school/university-of-indonesia/
   - type: Authentication
-    url: https://sso.ui.ac.id/
+    url: https://sso.ui.ac.id/cas/login
+  - type: ResearchRepository
+    url: https://scholarhub.ui.ac.id/
+  - type: ResearchRepository
+    url: https://scholar.ui.ac.id/
+  - type: LibraryCatalog
+    url: https://lib.ui.ac.id/
+  - type: Conformance
+    url: conformance/university-of-indonesia-conformance.yml
+  - type: DomainSecurity
+    url: security/university-of-indonesia-domain-security.yml
   - type: Plans
     url: plans/university-of-indonesia-plans-pricing.yml
   - type: RateLimits
@@ -107,6 +296,61 @@ common:
     url: json-ld/university-of-indonesia-context.jsonld
   - type: x-blog
     url: blogs/blogs.json
+x-coverage:
+  state: gated
+  reason: auth_required
+  detail: >-
+    University of Indonesia operates real machine surfaces on its own network and publishes
+    a contract for none of them. api.ui.ac.id is a Kong Enterprise 3.3.1.0 gateway that
+    answers HTTP 401 {"message":"Unauthorized"} on every probed path including /docs and
+    /openapi.json; the institution-hosted Moodle at emas2.ui.ac.id answers
+    /webservice/rest/server.php with a moodle_exception invalidtoken and /login/token.php
+    with missingparam, both live and both token-gated; sso.ui.ac.id serves a working CAS
+    login but returns the same HTML page with HTTP 200 for /cas/p3/serviceValidate,
+    /cas/idp/metadata and /cas/oidc/.well-known/openid-configuration, which is a soft-200,
+    not a documented endpoint. No developer portal, API reference, OpenAPI, key issuance or
+    client registration exists anywhere on ui.ac.id, and none has been generated to stand in
+    for one. The two surfaces that DO answer anonymously — the OAI-PMH providers on
+    scholarhub.ui.ac.id and scholar.ui.ac.id — are vendor tenancies (bepress Digital Commons
+    and Elsevier Pure) recorded as such rather than credited to UI. A secondary obstacle,
+    which does not change the finding: www.ui.ac.id sits behind an F5 Shape/TSPD JavaScript
+    interstitial that returns HTTP 200 with a bot-defense body for every path, so
+    /robots.txt, /llms.txt, /.well-known/security.txt and invented paths all "succeed" and
+    none of them was treated as evidence.
+  evidence:
+    - url: https://api.ui.ac.id/
+      status: 401
+    - url: https://api.ui.ac.id/openapi.json
+      status: 401
+    - url: https://api.ui.ac.id/docs
+      status: 401
+    - url: https://emas2.ui.ac.id/webservice/rest/server.php
+      status: 200
+    - url: https://emas2.ui.ac.id/login/token.php
+      status: 200
+    - url: https://emas2.ui.ac.id/mod/lti/auth.php
+      status: 200
+    - url: https://sso.ui.ac.id/cas/login
+      status: 200
+    - url: https://sso.ui.ac.id/account/node/3
+      status: 503
+    - url: https://scholarhub.ui.ac.id/do/oai/?verb=Identify
+      status: 200
+    - url: https://scholar.ui.ac.id/ws/oai?verb=Identify
+      status: 200
+    - url: https://scholar.ui.ac.id/ws/api/openapi.yaml
+      status: 200
+    - url: https://lib.ui.ac.id/
+      status: 200
+    - url: https://www.ui.ac.id/.well-known/security.txt
+      status: 200
+    - url: https://data.ui.ac.id/
+      status: 200
+    - url: https://api.crossref.org/members/4386
+      status: 200
+    - url: https://api.ror.org/v2/organizations?query=Universitas%20Indonesia
+      status: 200
+  checked: '2026-09-01'
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
