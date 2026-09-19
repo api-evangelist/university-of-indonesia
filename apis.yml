@@ -56,6 +56,21 @@ tags:
 - Research Repository
 - OAI-PMH
 - Identity
+- SSO
+- Learning Management
+- Library
+- API Gateway
+- Identity Federation
+tags_raw:
+- Education
+- Higher Education
+- University
+- Indonesia
+- Southeast Asia
+- Research
+- Research Repository
+- OAI-PMH
+- Identity
 - Single Sign-On
 - Learning Management
 - Library
@@ -184,6 +199,12 @@ apis:
   baseURL: https://scholar.ui.ac.id/ws/oai
   tags:
   - Research Repository
+  - CRI
+  - OAI-PMH
+  - Research
+  - Metadata
+  tags_raw:
+  - Research Repository
   - CRIS
   - OAI-PMH
   - Research
@@ -241,6 +262,11 @@ apis:
     The identifier is the institution's; the registry API is ROR's.
   humanURL: https://ror.org/0116zj450
   tags:
+  - Registry
+  - identifier
+  - ROR
+  - Research
+  tags_raw:
   - Registry
   - Identifier
   - ROR
