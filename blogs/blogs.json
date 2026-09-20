@@ -8,9 +8,9 @@
       "saved": 0,
       "method": "none",
       "note": "WebFetch ECONNRESET on both attempts this run",
-      "error": "parse_failed"
+      "error": "fetch_failed: ConnectionResetError"
     }
   ],
   "post_count": 0,
-  "fetched": "2026-09-13T12:41:53Z"
+  "fetched": "2026-09-19T19:51:11Z"
 }
