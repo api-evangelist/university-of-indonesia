@@ -3,8 +3,103 @@ name: University of Indonesia
 description: University of Indonesia public developer/API footprint review for APIs.json cataloging.
 url: https://raw.githubusercontent.com/api-evangelist/university-of-indonesia/refs/heads/main/review.yml
 created: '2026-06-03'
-modified: '2026-06-03'
+modified: '2026-09-01'
 reviews:
+  - date: '2026-09-01'
+    rating: 2
+    summary: >-
+      University pipeline re-profile with the operator axis applied. The June 2026
+      profile carried two apis[] entries and no operator attribution. Both were
+      re-judged and six surfaces were added. The single largest correction is a
+      CNAME tenancy the earlier pass never resolved: scholar.ui.ac.id, which looks
+      like a UI host, CNAMEs to ui.elsevierpure.com and is an Elsevier Pure Portal
+      (response header x-product "Pure Portal") serving Elsevier's generic "Pure
+      API" OpenAPI 3.0.1 at /ws/api/openapi.yaml — 827 paths, contact
+      pure-support@elsevier.com, servers [{url: /ws/api}], i.e. hostless and
+      invisible to a host-based ownership check. That contract was NOT saved; the
+      tenancy was recorded instead. scholarhub.ui.ac.id was likewise re-labelled
+      tenant (CNAME dcuischolarhub.bepress.com; OAI adminEmail
+      dc-support@elsevier.com). Three genuinely institution-operated surfaces were
+      found that the June pass missed, all on UI's own APNIC allocation
+      152.118.0.0/16 (netname INDONESIAUNI-ID): a Kong Enterprise 3.3.1.0 API
+      gateway at api.ui.ac.id (401 on every path), an institution-hosted Moodle at
+      emas2.ui.ac.id with live Moodle Web Services and an LTI 1.3 platform
+      endpoint, and the LONTAR library OPAC at lib.ui.ac.id. Crossref membership
+      4386 / prefix 10.7454 and ROR 0116zj450 were verified and recorded as
+      registry memberships. One dead pointer was removed
+      (https://sso.ui.ac.id/account/node/3, HTTP 503). The June note that
+      www.ui.ac.id, lib.ui.ac.id and lontar.ui.ac.id were geofenced is superseded —
+      all three answer; www.ui.ac.id is behind an F5 Shape/TSPD interstitial that
+      returns HTTP 200 for every path, including invented ones, so no status code
+      from that host was used as evidence.
+    endpoints:
+      - url: https://api.ui.ac.id/
+        status: 401
+        note: >-
+          Kong Enterprise 3.3.1.0 gateway, institution-operated; every probed path returns
+          Unauthorized.
+      - url: https://api.ui.ac.id/openapi.json
+        status: 401
+        note: No public contract behind the gateway.
+      - url: https://emas2.ui.ac.id/webservice/rest/server.php
+        status: 200
+        note: >-
+          Moodle Web Services, live and token-gated (moodle_exception / invalidtoken).
+      - url: https://emas2.ui.ac.id/mod/lti/auth.php
+        status: 200
+        note: >-
+          LTI 1.3 OIDC authorization responder — education-regime lti conformance evidence.
+      - url: https://emas2.ui.ac.id/login/token.php
+        status: 200
+        note: Moodle token issuance, missingparam to an anonymous call.
+      - url: https://sso.ui.ac.id/cas/login
+        status: 200
+        note: Apereo CAS login, live. Institution-operated.
+      - url: https://sso.ui.ac.id/account/node/3
+        status: 503
+        note: >-
+          DEAD — the June Documentation pointer. Removed from apis.yml.
+      - url: https://sso.ui.ac.id/cas/idp/metadata
+        status: 200
+        note: >-
+          Soft-200 — returns the CAS login HTML, not SAML metadata. No Shibboleth or SAML IdP.
+      - url: https://scholar.ui.ac.id/ws/api/openapi.yaml
+        status: 200
+        note: >-
+          Elsevier Pure API 5.36.2-1, 827 paths, relative servers block. Vendor contract, NOT saved.
+      - url: https://scholar.ui.ac.id/ws/oai?verb=Identify
+        status: 200
+        note: >-
+          Pure OAI Repository, adminEmail purehosted@elsevier.com. Tenant surface.
+      - url: https://scholarhub.ui.ac.id/do/oai/?verb=Identify
+        status: 200
+        note: >-
+          UI Scholars Hub, 115 sets, 9 metadata formats. bepress tenant, adminEmail
+          dc-support@elsevier.com.
+      - url: https://lib.ui.ac.id/
+        status: 200
+        note: >-
+          OPAC - Universitas Indonesia Library — institution-operated, no machine surface found.
+      - url: https://data.ui.ac.id/
+        status: 200
+        note: >-
+          Website Disabled on Apache 2.2.3 / PHP 5.2.9. Not an open-data portal; no pointer emitted.
+      - url: https://www.ui.ac.id/.well-known/security.txt
+        status: 200
+        note: >-
+          F5 Shape/TSPD bot-defense body. Every path on this host returns 200; not evidence.
+      - url: https://api.crossref.org/members/4386
+        status: 200
+        note: >-
+          Crossref member Universitas Indonesia, prefix 10.7454, 12,754 DOIs.
+      - url: https://api.ror.org/v2/organizations?query=Universitas%20Indonesia
+        status: 200
+        note: >-
+          ROR 0116zj450, University of Indonesia.
+      - url: https://technical.edugain.org/api.php?action=list_entities&format=json
+        status: 200
+        note: >-
+          10,615 entities, no .ac.id entityID. Indonesia has no eduGAIN member federation.
   - date: '2026-06-03'
     rating: 2
     summary: >-

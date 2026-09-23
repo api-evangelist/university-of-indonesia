@@ -1,0 +1,137 @@
+generated: '2026-09-01'
+method: probed
+source: >-
+  Live probes of University of Indonesia hosts on 2026-09-01 (api.ui.ac.id, sso.ui.ac.id,
+  emas2.ui.ac.id, lib.ui.ac.id, scholarhub.ui.ac.id, scholar.ui.ac.id), plus the Crossref REST
+  API, the ROR v2 API, the DataCite REST API and the eduGAIN technical federation/entity APIs.
+docs: https://scholarhub.ui.ac.id/
+note: >-
+  Conformance against the Kin Score `education` regime standards[]. Every entry below was reached
+  by fetching the named URL and reading the response body; none is a prose claim from a university
+  web page. Standards not exposed are recorded conforms:false with the negative probe that
+  established it, and are never inferred from the presence of a vendor product. `operator` records
+  WHO RUNS the surface the evidence came from: the two OAI-PMH providers are vendor tenancies on
+  UI hostnames (bepress Digital Commons and Elsevier Pure) and are marked tenant, not institution.
+  www.ui.ac.id sits behind an F5 Shape/TSPD interstitial that returns HTTP 200 for every path
+  including ones that do not exist, so nothing on that host was used as evidence for or against
+  any standard.
+standards:
+- id: lti
+  conforms: true
+  operator: institution
+  evidence: >-
+    Institution-hosted Moodle at emas2.ui.ac.id (152.118.24.145, inside UI's own APNIC allocation
+    152.118.0.0/16, netname INDONESIAUNI-ID) exposes an LTI 1.3 platform endpoint. GET
+    https://emas2.ui.ac.id/mod/lti/auth.php returns HTTP 200 text/html with a populated
+    LTI OIDC authorization response form — <form action="" name="ltiAuthForm" id="ltiAuthForm"
+    method="post" enctype="application/x-www-form-urlencoded"> carrying hidden error /
+    error_description inputs — which is Moodle's IMS Global LTI 1.3 Advantage authentication
+    responder rejecting a request with no login_hint. https://emas2.ui.ac.id/enrol/lti/ returns
+    404, so the LTI *publisher* (tool provider) side is not enabled; only the platform side is.
+- id: oai-pmh
+  conforms: true
+  operator: tenant
+  evidence: >-
+    Two live OAI-PMH 2.0 providers, both on UI hostnames, both vendor-operated.
+    (1) https://scholarhub.ui.ac.id/do/oai/?verb=Identify returns HTTP 200 with
+    repositoryName "UI Scholars Hub", protocolVersion 2.0, repositoryIdentifier
+    scholarhub.ui.ac.id, earliestDatestamp 2000-01-19T00:00:00Z, granularity
+    YYYY-MM-DDThh:mm:ssZ, deletedRecord no, adminEmail dc-support@elsevier.com;
+    ?verb=ListMetadataFormats returns nine prefixes (simple-dublin-core, oai_dc, oai-dc, dcs,
+    qualified-dublin-core, qdc, dcq, oai_etdms, oai_openaire); ?verb=ListSets returns 115 sets.
+    The host CNAMEs to dcuischolarhub.bepress.com, so the operator is bepress/Elsevier Digital
+    Commons.
+    (2) https://scholar.ui.ac.id/ws/oai?verb=Identify returns HTTP 200 application/xml with
+    repositoryName "Pure OAI Repository", baseURL https://scholar.ui.ac.id/ws/oai,
+    protocolVersion 2.0, earliestDatestamp 2019-02-27T19:49:23Z, adminEmail
+    purehosted@elsevier.com and an xsi:schemaLocation naming the OpenAIRE CERIF 1.2 profile;
+    ?verb=ListMetadataFormats returns qdc, xmetadiss, mods, oai_dc, nl_didl, mods_swepub. The
+    host CNAMEs to ui.elsevierpure.com, so the operator is Elsevier Pure.
+    The harvestable content is the university's; neither OAI provider is UI-engineered, which is
+    why operator is tenant and not institution.
+- id: crossref
+  conforms: true
+  operator: registry
+  evidence: >-
+    https://api.crossref.org/members/4386 returns HTTP 200 with primary-name "Universitas
+    Indonesia", location "Universitas Indonesia, Indonesia", prefixes ["10.7454"] and counts
+    {current-dois: 2395, backfile-dois: 10359, total-dois: 12754}.
+    https://api.crossref.org/prefixes/10.7454 resolves the prefix back to
+    https://id.crossref.org/member/4386, name "Universitas Indonesia".
+    https://api.crossref.org/members/4386/works reports 12,838 deposited works (sample DOIs
+    10.7454/jki.v3i2.8848, publisher "Universitas Indonesia"). UI is a DOI registrant in its own
+    right; the API is Crossref's and is not stored in this repository.
+- id: datacite
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe. https://api.datacite.org/providers?query=Universitas+Indonesia and
+    ?query=ui.ac.id both return HTTP 200 with meta.total 0;
+    https://api.datacite.org/clients?query=Universitas%20Indonesia returns a single unrelated
+    Indonesian client (telu.telu, Telkom University). University of Indonesia holds no DataCite
+    provider or repository account. 85 DOIs carry publisher "Universitas Indonesia" in DataCite,
+    but they are registered under other members' prefixes and are not evidence of a UI membership.
+- id: shibboleth
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe. UI's campus identity provider is Apereo CAS, not Shibboleth:
+    https://sso.ui.ac.id/ redirects to /cas/login and serves a CAS login form. No Shibboleth
+    metadata was found — https://sso.ui.ac.id/cas/idp/metadata returns the CAS login HTML with
+    HTTP 200 (a soft-200, not metadata). Indonesia has no eduGAIN member federation: the eduGAIN
+    federation list (https://technical.edugain.org/api.php?action=list_feds&format=json) contains
+    no Indonesian entry, and the full entity list (action=list_entities, 10,615 entities,
+    7.8 MB) contains no *.ac.id entityID at all.
+- id: saml
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe, same sources as shibboleth. No SAML 2.0 EntityDescriptor for any ui.ac.id
+    host appears in the eduGAIN aggregate, and no SAML metadata endpoint answers on
+    sso.ui.ac.id — /cas/idp/metadata returns the HTML login page with HTTP 200. CAS 2.0/3.0
+    ticket validation is the deployed protocol and is not one of the education regime's
+    standards[].
+- id: orcid
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe. No ORCID integration endpoint or member configuration was reachable on any
+    UI host. The Elsevier Pure portal at scholar.ui.ac.id displays researcher pages, but
+    https://scholar.ui.ac.id/en/persons/ returns HTTP 403 behind a Cloudflare "Just a moment..."
+    interstitial, and the OAI CERIF ListRecords response carried no ORCID identifier, so no
+    ORCID claim is made. Any ORCID linkage that does exist would in any case be Elsevier Pure's
+    integration, not UI's.
+- id: scim
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe. No SCIM 2.0 endpoint answers on the institution's hosts:
+    https://api.ui.ac.id/ and every path beneath it return HTTP 401 from Kong with
+    {"message":"Unauthorized"}, so no /scim/v2 discovery is possible; emas2.ui.ac.id serves no
+    SCIM route. No SCIM claim appears in any public UI document reached in this pass.
+- id: oneroster
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe. No IMS OneRoster endpoint or claim was found. The institution's student
+    information system, academic.ui.ac.id (siakng.ui.ac.id CNAMEs to it), has no public A record
+    and does not resolve from the open internet, so it exposes no public roster surface.
+- id: ed-fi
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe. Ed-Fi is a US K-12 data standard with no Indonesian higher-education
+    deployment; no Ed-Fi ODS/API endpoint or claim was found on any UI host.
+- id: caliper
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe. No IMS Caliper Analytics event store or sensor endpoint answers on
+    emas2.ui.ac.id; Moodle's Caliper logstore plugin is not enabled on the public surface and no
+    Caliper claim was found.
+- id: qti
+  conforms: false
+  operator: none
+  evidence: >-
+    Negative probe. No QTI content-packaging or assessment-delivery endpoint was found on
+    emas2.ui.ac.id or any other UI host.

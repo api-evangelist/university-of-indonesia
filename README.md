@@ -64,28 +64,76 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-University of Indonesia (Universitas Indonesia, UI) is a public research university in Depok and Jakarta, ranked **#206 in the QS World University Rankings 2025** and the highest-ranked university in Indonesia. This repository catalogs UI's public, machine-readable developer/API footprint as an [APIs.json](http://apisjson.org) profile.
+University of Indonesia (Universitas Indonesia, UI) is a public research university in Depok and Jakarta, the highest-ranked university in Indonesia. This repository catalogs UI's public, machine-readable developer/API footprint as an [APIs.json](http://apisjson.org) profile.
 
 - APIs.json: https://raw.githubusercontent.com/api-evangelist/university-of-indonesia/refs/heads/main/apis.yml
 - Run with Naftiko: https://github.com/naftiko/fleet?utm_source=api-evangelist&utm_medium=readme&utm_campaign=university-of-indonesia-api-evangelist&utm_content=repo
 
 ## Type
 
+- **Class:** university (`x-type: university`)
+- **Category:** Public Research University
 - **Type:** Index
 - **Position:** Consumer
 - **Access:** 3rd-Party
 
-## Tags
+## Who operates what
 
-Education, Higher Education, University, Indonesia, Research, Repository, OAI-PMH, Authentication
+A university is a federation of buyers, not a producer, so every surface below carries an
+`x-operator` in `apis.yml` saying **who runs the thing**, alongside the usual `method:` provenance
+saying how we came to hold the artifact.
+
+| Surface | Host | Operator | Why |
+|---|---|---|---|
+| UI API Gateway (Kong Enterprise 3.3.1.0) | api.ui.ac.id | `institution` | ui.ac.id, no CNAME, 152.118.148.211 inside UI's own APNIC block 152.118.0.0/16 (INDONESIAUNI-ID) |
+| SSO UI (Apereo CAS) | sso.ui.ac.id | `institution` | ui.ac.id, no CNAME, 152.118.148.213, self-hosted open-source CAS |
+| EMAS2 (Moodle Web Services + LTI 1.3) | emas2.ui.ac.id | `institution` | ui.ac.id, no CNAME, 152.118.24.145, self-hosted Moodle |
+| LONTAR Library OPAC | lib.ui.ac.id | `institution` | ui.ac.id, no CNAME, 152.118.147.93; lontar.ui.ac.id redirects here |
+| UI Scholars Hub OAI-PMH | scholarhub.ui.ac.id | `tenant` | **CNAME → dcuischolarhub.bepress.com**; OAI adminEmail dc-support@elsevier.com |
+| UI Research Portal (Elsevier Pure) | scholar.ui.ac.id | `tenant` | **CNAME → ui.elsevierpure.com**; response header `x-product: Pure Portal` |
+| Crossref member 4386 | api.crossref.org | `registry` | Membership, prefix 10.7454, 12,754 DOIs — a fact about UI, not a UI contract |
+| ROR 0116zj450 | api.ror.org | `registry` | Identifier registry UI is registered in |
+
+**Two CNAME tenancies are the headline finding.** Both `scholarhub.ui.ac.id` and
+`scholar.ui.ac.id` sit on the university's own registrable domain, so any host-based ownership
+check reads them as UI's own engineering. They are not. `scholar.ui.ac.id/ws/api/openapi.yaml`
+serves Elsevier's generic **Pure API** OpenAPI 3.0.1 — 827 paths, `info.contact.email`
+`pure-support@elsevier.com`, `servers: [{url: /ws/api}]` (relative, therefore invisible to a
+host-based check). **That contract is deliberately not stored in this repository.** The tenancy is
+recorded; the contract belongs in Elsevier's own profile.
 
 ## APIs
 
-- **UI Scholars Hub OAI-PMH** — OAI-PMH 2.0 metadata-harvesting interface for the UI Scholars Hub institutional research repository (Digital Commons / bepress). Verified live.
-  - Docs: https://scholarhub.ui.ac.id/
-  - Base URL: https://scholarhub.ui.ac.id/do/oai/
-- **SSO UI (CAS Authentication)** — University-wide Single Sign-On (Sistem Akun UI) using the CAS protocol. Login endpoint reachable; integration gated, no public developer portal.
-  - Docs: https://sso.ui.ac.id/account/node/3
+- **UI API Gateway (Kong Enterprise)** — `api.ui.ac.id`, institution-operated. HTTP 401
+  `{"message":"Unauthorized"}` on every probed path including `/docs` and `/openapi.json`.
+- **SSO UI (CAS Single Sign-On)** — `sso.ui.ac.id/cas/login`, institution-operated, live. No public
+  developer docs; `/cas/idp/metadata` and `/cas/oidc/.well-known/openid-configuration` return the
+  login HTML with 200 (soft-200, not metadata).
+- **EMAS2 Learning Platform** — institution-hosted Moodle. `/webservice/rest/server.php` →
+  `moodle_exception` / `invalidtoken`; `/login/token.php` → `missingparam`; `/mod/lti/auth.php` →
+  a populated LTI 1.3 OIDC authorization form.
+- **UI Scholars Hub OAI-PMH** — bepress Digital Commons tenant. 115 sets, 9 metadata prefixes.
+- **UI Research Portal (Elsevier Pure)** — Pure tenant. `/ws/oai` OAI-PMH with an OpenAIRE CERIF
+  1.2 profile; `/ws/api` serves Elsevier's contract (not saved here).
+- **LONTAR Library OPAC** — institution-operated; human-facing only, no machine surface found.
+- **Crossref Member 4386** and **ROR 0116zj450** — registry memberships.
+
+## Conformance (Kin Score `education` regime)
+
+[conformance/university-of-indonesia-conformance.yml](conformance/university-of-indonesia-conformance.yml)
+— every entry probed, positives and negatives alike.
+
+- `lti` — **yes**, institution (EMAS2 Moodle LTI 1.3 platform endpoint)
+- `oai-pmh` — **yes**, tenant (both providers are vendor-operated on UI hostnames)
+- `crossref` — **yes**, registry (member 4386, prefix 10.7454)
+- `datacite`, `shibboleth`, `saml`, `orcid`, `scim`, `oneroster`, `ed-fi`, `caliper`, `qti` — no,
+  each with the negative probe that established it
+
+## Why this profile is thin
+
+`x-coverage: gated / auth_required`. UI runs real machine surfaces on its own network and publishes
+a contract for none of them. There is no developer portal, API reference, OpenAPI, key issuance or
+client registration anywhere on `ui.ac.id`, and none has been generated to stand in for one.
 
 ## Plans
 
@@ -102,21 +150,36 @@ Education, Higher Education, University, Indonesia, Research, Repository, OAI-PM
 ## Timestamps
 
 - **Created:** 2026-06-03
-- **Modified:** 2026-06-03
+- **Modified:** 2026-09-01
 
 ## Common Properties
 
 - Website: https://www.ui.ac.id/
 - LinkedIn: https://www.linkedin.com/school/university-of-indonesia/
-- Authentication (SSO/CAS): https://sso.ui.ac.id/
-- Plans, RateLimits, FinOps, and Review pointers (see above and [review.yml](review.yml))
+- Authentication (CAS SSO): https://sso.ui.ac.id/cas/login
+- ResearchRepository: https://scholarhub.ui.ac.id/ and https://scholar.ui.ac.id/
+- LibraryCatalog: https://lib.ui.ac.id/
+- Conformance, DomainSecurity, Plans, RateLimits, FinOps and Review pointers (see above and
+  [review.yml](review.yml))
 
 ## Notes
 
-- The UI Scholars Hub OAI-PMH endpoint was verified live (HTTP 200, valid OAI-PMH 2.0 Identify response, repositoryName "UI Scholars Hub").
-- sso.ui.ac.id was confirmed as a CAS Single Sign-On service; no public, self-service developer documentation or API keys were found.
-- No official API Evangelist-style GitHub organization was found for the university; only unofficial community projects exist, so no GitHub common property is asserted.
-- Several institutional domains (www.ui.ac.id, lib.ui.ac.id, lontar.ui.ac.id) appear geofenced and did not resolve from the review environment; they are known to be live. No endpoints were fabricated.
+- **Superseding the June 2026 note about geofencing.** `www.ui.ac.id`, `lib.ui.ac.id` and
+  `lontar.ui.ac.id` all answer. `www.ui.ac.id` sits behind an F5 Shape/TSPD JavaScript
+  interstitial that returns HTTP 200 with a bot-defense body for **every** path — `/robots.txt`,
+  `/llms.txt`, `/.well-known/security.txt` and invented paths all "succeed" — so no status code
+  from that host was treated as evidence for or against anything.
+- One dead pointer was removed: `https://sso.ui.ac.id/account/node/3` returns HTTP 503.
+- `data.ui.ac.id` answers HTTP 200 with `<h1>Website Disabled</h1>` on Apache 2.2.3 / PHP 5.2.9.
+  It is not an open-data portal and no `OpenData` pointer is asserted.
+- `academic.ui.ac.id` (SIAK-NG, the student information system; `siakng.ui.ac.id` CNAMEs to it) has
+  no public A record and does not resolve from the open internet.
+- No official University of Indonesia GitHub organization exists. `github.com/universitas-indonesia`
+  and `github.com/University-of-Indonesia` both have 0 public repositories; everything else found
+  is faculty, lab or student-society work, so no `GitHubOrganization` pointer is asserted.
+- Indonesia has no eduGAIN member federation and no `*.ac.id` entityID appears in the eduGAIN
+  entity aggregate (10,615 entities), so there is no identity-federation surface to record.
+- No specification has been fabricated or generated for any of these surfaces.
 
 ## Maintainers
 
