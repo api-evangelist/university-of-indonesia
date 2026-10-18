@@ -57,7 +57,7 @@ tags:
 - OAI-PMH
 - Identity
 - SSO
-- Learning Management
+- LMS
 - Library
 - API Gateway
 - Identity Federation
@@ -143,6 +143,12 @@ apis:
   humanURL: https://emas2.ui.ac.id/
   baseURL: https://emas2.ui.ac.id/webservice/rest/server.php
   tags:
+  - LMS
+  - Moodle
+  - LTI
+  - Education
+  - Private
+  tags_raw:
   - Learning Management
   - Moodle
   - LTI
